@@ -5,8 +5,8 @@ angular.module('libraryApp')
   remove $http from the controller
   add BookService as a dependency
 *******************************************/
-BooksShowController.$inject=['$routeParams', '$location', '$http'];
-function BooksShowController($routeParams,    $location,   $http) {
+BooksShowController.$inject=['$routeParams', '$location', 'BookService'];
+function BooksShowController($routeParams,    $location, BookService) {
   var vm = this;
   var bookId = $routeParams.id;
   // exports
@@ -19,27 +19,24 @@ function BooksShowController($routeParams,    $location,   $http) {
   getBook(bookId);
 
 
-  function getBook(id) {
+  function getBook(bookId) {
     /*************************************
       REMOVE $http here -
       make use of the service instead
       BookService.get(id).then()
     **************************************/
+      console.log('controller getbook:', bookId);
+      BookService.get(bookId).then(onBookShowSuccess, onError);
 
-    $http({
-      method: 'GET',
-      url: 'https://super-crud.herokuapp.com/books/'+id
-    }).then(onBookShowSuccess, onError);
-
-
-    function onBookShowSuccess(response){
-      console.log('here\'s the data for book', id, ':', response.data);
-      vm.book = response.data;
+      function onBookShowSuccess(bookId){
+        console.log('here is the data for the book', bookId);
+        vm.book = bookId;
+      }
+      function onError() {
+        console.log("error getting book");
+      }
     }
-    function onError(error){
-      console.log('there was an error: ', error);
-    }
-  }
+
 
 
   /*****************************************
@@ -59,24 +56,14 @@ function BooksShowController($routeParams,    $location,   $http) {
       console.log("error updating the book");
     }
   }
-
+/////////////////////////////////////////////////
   function deleteBook(book) {
       console.log('deleting book: ', book);
+      BookService.remove(book._id).then(onBookDeleteSuccess);
 
-    /*************************************
-      REMOVE $http here -
-      make use of the service instead
-      BookService.remove(id).then()
-    **************************************/
-
-      $http({
-        method: 'DELETE',
-        url: 'https://super-crud.herokuapp.com/books/' + book._id,
-      }).then(onBookDeleteSuccess);
-
-      function onBookDeleteSuccess(response){
-        console.log('book delete response data:', response.data);
-        $location.path('/');
-      }
-    }
+    function onBookDeleteSuccess(response){
+       console.log('book delete response data:', response.data);
+       $location.path('/');
+     }
+}
 }
