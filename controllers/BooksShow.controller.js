@@ -5,8 +5,8 @@ angular.module('libraryApp')
   remove $http from the controller
   add BookService as a dependency
 *******************************************/
-BooksShowController.$inject=['$routeParams', '$location', '$http'];
-function BooksShowController($routeParams,    $location,   $http) {
+BooksShowController.$inject=['BookService','$routeParams', '$location', '$http'];
+function BooksShowController(BookService, $routeParams,    $location,   $http) {
   var vm = this;
   var bookId = $routeParams.id;
   // exports
@@ -20,21 +20,12 @@ function BooksShowController($routeParams,    $location,   $http) {
 
 
   function getBook(id) {
-    /*************************************
-      REMOVE $http here -
-      make use of the service instead
-      BookService.get(id).then()
-    **************************************/
 
-    $http({
-      method: 'GET',
-      url: 'https://super-crud.herokuapp.com/books/'+id
-    }).then(onBookShowSuccess, onError);
+    BookService.get(id).then(onBookShowSuccess, onError);
 
-
-    function onBookShowSuccess(response){
-      console.log('here\'s the data for book', id, ':', response.data);
-      vm.book = response.data;
+    function onBookShowSuccess(taco){
+      console.log(taco);
+      vm.book=taco;
     }
     function onError(error){
       console.log('there was an error: ', error);
@@ -63,16 +54,7 @@ function BooksShowController($routeParams,    $location,   $http) {
   function deleteBook(book) {
       console.log('deleting book: ', book);
 
-    /*************************************
-      REMOVE $http here -
-      make use of the service instead
-      BookService.remove(id).then()
-    **************************************/
-
-      $http({
-        method: 'DELETE',
-        url: 'https://super-crud.herokuapp.com/books/' + book._id,
-      }).then(onBookDeleteSuccess);
+      BookService.remove(book).then(onBookDeleteSuccess);
 
       function onBookDeleteSuccess(response){
         console.log('book delete response data:', response.data);

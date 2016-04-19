@@ -47,27 +47,19 @@ function BookService($http, $q) {
       def.reject(self.books.error);
     }
   }
-
-
-
-
   /* * * * * * * * * * * * * * * *
    *  Fetch a single book
    *
    * * * * * * * * * * * * * * * */
-
   function get(bookId) {
     console.log('someone requested book', bookId);
     var def = $q.defer();  // create a new 'deferred'
-
     $http({
       method: 'GET',
       url: 'https://super-crud.herokuapp.com/books/'+bookId
     }).then(onBookShowSuccess, onError);
-
     // we return the promise here - whenever it's complete any other .then's you attach will get run too
     return def.promise;
-
     // note how these functions are defined within the body of another function?
     // that gives them access to variables from that function
     // - see lexical scope & closures https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
@@ -84,17 +76,13 @@ function BookService($http, $q) {
       def.reject(self.book);
     }
   }
-
   /* * * * * * * * * * * * * * * *
    *  Update a single book
    *
    * * * * * * * * * * * * * * * */
-
-
-  function update(bookToUpdate) {
+   function update(bookToUpdate) {
     console.log('service updating book: ', bookToUpdate);
     var def = $q.defer();
-
     $http({
       method: 'PUT',
       url: 'https://super-crud.herokuapp.com/books/' + bookToUpdate._id,
@@ -133,52 +121,47 @@ function BookService($http, $q) {
    *
    * * * * * * * * * * * * * * * */
 
-  function remove(book) {
-    console.log('deleting book: ', book);
 
-
-
+    function remove(book) {
+     console.log('service updating book: ',book);
+     var def = $q.defer();
+     $http({
+       method: 'DELETE',
+       url: 'https://super-crud.herokuapp.com/books/' + book._id,
+     }).then(onBookDeleteSuccess, onError);
+     // we return the promise here - whenever it's complete any other .then's you attach will get run too
+     return def.promise;
     /*
       CREATE A NEW deferred here
     */
-
     /*
       TRIGGER $http REQUEST HERE
       ATTACH THE FUNCTIONS BELOW TO HANDLE SUCCESS AND ERROR
     */
-
-
     /*
       RETURN THE DEFERRED'S promise
     */
-
-
-
-
     // note how these functions are defined within the body of another function?
     // that gives them access to variables from that function
     // - see lexical scope & closures https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
     function onBookDeleteSuccess(response){
       console.log('book delete response data:', response.data, this);
       self.book = {};
+      def.resolve(self.book);
       /*
         RESOLVE THE DEFERRED
         PASS THE BOOK DOWN THE CHAIN (It's an empty object now)
       */
-
-
     }
-
     function onError(error) {
       console.log('service reported error deleting book', book);
       self.book = {error: error};
       // oh noes!  error - reject the deferred - at this point we get to choose what we send on to the controller
+      def.reject(self.book);
       /*
         REJECT THE DEFERRED
         SEND THE ERROR DOWN THE CHAIN
       */
     }
-
   }
-
 }
