@@ -133,27 +133,16 @@ function BookService($http, $q) {
    *
    * * * * * * * * * * * * * * * */
 
-  function remove(book) {
-    console.log('deleting book: ', book);
+  function remove(bookId) {
+    console.log('deleting book: ', bookId);
+    var def = $q.defer();
 
+    $http({
+      method: 'DELETE',
+      url: 'https://super-crud.herokuapp.com/books/' + bookId,
+    }).then(onBookDeleteSuccess, onError);
 
-
-    /*
-      CREATE A NEW deferred here
-    */
-
-    /*
-      TRIGGER $http REQUEST HERE
-      ATTACH THE FUNCTIONS BELOW TO HANDLE SUCCESS AND ERROR
-    */
-
-
-    /*
-      RETURN THE DEFERRED'S promise
-    */
-
-
-
+    return def.promise;
 
     // note how these functions are defined within the body of another function?
     // that gives them access to variables from that function
@@ -161,17 +150,14 @@ function BookService($http, $q) {
     function onBookDeleteSuccess(response){
       console.log('book delete response data:', response.data, this);
       self.book = {};
-      /*
-        RESOLVE THE DEFERRED
-        PASS THE BOOK DOWN THE CHAIN (It's an empty object now)
-      */
-
+      def.resolve(self.book);
 
     }
 
     function onError(error) {
-      console.log('service reported error deleting book', book);
+      console.log('service reported error deleting book', bookId);
       self.book = {error: error};
+      def.reject(self.book);
       // oh noes!  error - reject the deferred - at this point we get to choose what we send on to the controller
       /*
         REJECT THE DEFERRED
@@ -180,5 +166,4 @@ function BookService($http, $q) {
     }
 
   }
-
 }
