@@ -5,8 +5,8 @@ angular.module('libraryApp')
   remove $http from the controller
   add BookService as a dependency
 *******************************************/
-BooksShowController.$inject=['$routeParams', '$location', '$http'];
-function BooksShowController($routeParams,    $location,   $http) {
+BooksShowController.$inject=['$routeParams', '$location', 'BookService'];
+function BooksShowController($routeParams,    $location,   BookService) {
   var vm = this;
   var bookId = $routeParams.id;
   // exports
@@ -26,15 +26,12 @@ function BooksShowController($routeParams,    $location,   $http) {
       BookService.get(id).then()
     **************************************/
 
-    $http({
-      method: 'GET',
-      url: 'https://super-crud.herokuapp.com/books/'+id
-    }).then(onBookShowSuccess, onError);
+  BookService.get(id).then(onBookShowSuccess, onError);
 
 
-    function onBookShowSuccess(response){
-      console.log('here\'s the data for book', id, ':', response.data);
-      vm.book = response.data;
+    function onBookShowSuccess(book){
+      console.log('here\'s the data for book', id, ':', book);
+      vm.book = book;
     }
     function onError(error){
       console.log('there was an error: ', error);
@@ -54,6 +51,7 @@ function BooksShowController($routeParams,    $location,   $http) {
       console.log('controller got updated data for book ', book._id, ':', book);
       vm.book = book;
       $location.path('/');
+
     }
     function onError() {
       console.log("error updating the book");
@@ -69,14 +67,12 @@ function BooksShowController($routeParams,    $location,   $http) {
       BookService.remove(id).then()
     **************************************/
 
-      $http({
-        method: 'DELETE',
-        url: 'https://super-crud.herokuapp.com/books/' + book._id,
-      }).then(onBookDeleteSuccess);
 
-      function onBookDeleteSuccess(response){
-        console.log('book delete response data:', response.data);
-        $location.path('/');
-      }
-    }
+      BookService.remove(book).then(onBookDeleteSuccess);
 }
+      function onBookDeleteSuccess(book){
+        console.log('controller book deleted:', book);
+        $location.path('/');
+
+    }
+  }
