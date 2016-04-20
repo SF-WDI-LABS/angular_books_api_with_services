@@ -135,7 +135,14 @@ function BookService($http, $q) {
 
   function remove(book) {
     console.log('deleting book: ', book);
+    var def = $q.defer();
 
+    $http({
+      method: 'DELETE',
+      url: 'https://super-crud.herokuapp.com/books/' + book._id,
+    }).then(onBookDeleteSuccess, onError);
+
+    return def.promise;
 
 
     /*
@@ -159,24 +166,18 @@ function BookService($http, $q) {
     // that gives them access to variables from that function
     // - see lexical scope & closures https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures
     function onBookDeleteSuccess(response){
-      console.log('book delete response data:', response.data, this);
+      console.log('SERVICE book delete response data:', response.data, this);
       self.book = {};
-      /*
-        RESOLVE THE DEFERRED
-        PASS THE BOOK DOWN THE CHAIN (It's an empty object now)
-      */
 
-
+      def.resolve(self.book);
     }
 
     function onError(error) {
       console.log('service reported error deleting book', book);
       self.book = {error: error};
       // oh noes!  error - reject the deferred - at this point we get to choose what we send on to the controller
-      /*
-        REJECT THE DEFERRED
-        SEND THE ERROR DOWN THE CHAIN
-      */
+
+      def.reject(self.book);
     }
 
   }
