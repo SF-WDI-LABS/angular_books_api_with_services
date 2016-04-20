@@ -47,29 +47,10 @@ function BooksShowController($routeParams,    $location,   BookService) {
   }
 
   function deleteBook(book) {
-      console.log('deleting book: ', book);
-      var def = $q.defer();
-
-      $http({
-        method: 'DELETE',
-        url: 'https://super-crud.herokuapp.com/books/' + book._id,
-      }).then(onBookDeleteSuccess);
-
-      return def.promise;
-
-      function onBookDeteleSuccess(response){
-        console.log('book delete response data:', response.data, this);
-        self.book = {};
-
-
-        def.resolve(self.book);
-      }
-
-      function onError(error) {
-        console.log('service reported error on delete', book);
-        self.book = {error: error};
-
-        def.reject(self.books.error);
-      }
+    console.log('deleting book: ', book);
+    BookService.remove(book).then(function(book){
+      console.log('delete worked');
+      $location.path('/');
+    });
   }
 }
