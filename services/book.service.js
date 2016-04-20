@@ -1,7 +1,7 @@
 angular.module('libraryApp')
   .service('BookService', BookService);
 
-BookService.$inject = ['$http', '$q'];
+BookService.$inject = ['$http', '$q', '$resource'];
 function BookService($http, $q) {
   console.log('service');
   var self = this;  // similar to vm = this, but we're not working with a view-model here so using the 'generic' form for this closure
