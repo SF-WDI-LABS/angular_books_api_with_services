@@ -5,8 +5,8 @@ angular.module('libraryApp')
   remove $http from the controller
   add BookService as a dependency
 *******************************************/
-BooksShowController.$inject=['$routeParams', '$location', '$http'];
-function BooksShowController($routeParams,    $location,   $http) {
+BooksShowController.$inject=['$routeParams', '$location', 'BookService'];
+function BooksShowController($routeParams,    $location,   BookService) {
   var vm = this;
   var bookId = $routeParams.id;
   // exports
@@ -20,25 +20,11 @@ function BooksShowController($routeParams,    $location,   $http) {
 
 
   function getBook(id) {
-    /*************************************
-      REMOVE $http here -
-      make use of the service instead
-      BookService.get(id).then()
-    **************************************/
+    BookService.get(id).then(function(book){
+      console.log('book by id in the controller', book);
+      vm.book = book;
+    });
 
-    $http({
-      method: 'GET',
-      url: 'https://super-crud.herokuapp.com/books/'+id
-    }).then(onBookShowSuccess, onError);
-
-
-    function onBookShowSuccess(response){
-      console.log('here\'s the data for book', id, ':', response.data);
-      vm.book = response.data;
-    }
-    function onError(error){
-      console.log('there was an error: ', error);
-    }
   }
 
 
