@@ -1,7 +1,7 @@
 angular.module('libraryApp')
   .service('BookService', BookService);
 
-BookService.$inject = ['$http', '$q'];
+BookService.$inject = ['$http', '$q', '$resource'];
 function BookService($http, $q) {
   console.log('service');
   var self = this;  // similar to vm = this, but we're not working with a view-model here so using the 'generic' form for this closure
@@ -134,10 +134,13 @@ function BookService($http, $q) {
    * * * * * * * * * * * * * * * */
 
   function remove(book) {
-    console.log('deleting book: ', book);
+    console.log('DELETING BOOK!! ', book);
+    var def = $q.defer();  // create a new 'deferred'
 
-
-
+    $http({
+      method: 'DELETE',
+      url: 'https://super-crud.herokuapp.com/books/'+ book._id
+    }).then(onBookDeleteSuccess, onError);
     /*
       CREATE A NEW deferred here
     */
@@ -146,14 +149,10 @@ function BookService($http, $q) {
       TRIGGER $http REQUEST HERE
       ATTACH THE FUNCTIONS BELOW TO HANDLE SUCCESS AND ERROR
     */
-
-
     /*
       RETURN THE DEFERRED'S promise
     */
-
-
-
+    return def.promise;
 
     // note how these functions are defined within the body of another function?
     // that gives them access to variables from that function
@@ -161,12 +160,7 @@ function BookService($http, $q) {
     function onBookDeleteSuccess(response){
       console.log('book delete response data:', response.data, this);
       self.book = {};
-      /*
-        RESOLVE THE DEFERRED
-        PASS THE BOOK DOWN THE CHAIN (It's an empty object now)
-      */
-
-
+      def.resolve(self.book);
     }
 
     function onError(error) {
@@ -177,8 +171,32 @@ function BookService($http, $q) {
         REJECT THE DEFERRED
         SEND THE ERROR DOWN THE CHAIN
       */
+      def.reject(self.book);
     }
 
   }
 
+}
+
+
+//BooksIndex.controller.js
+angular.module('libraryApp')
+  .controller('BooksIndexController', BooksIndexController);
+
+BooksIndexController.$inject=['BookService'];
+function BooksIndexController( BookService) {
+  var vm = this;
+  // exports
+  vm.books = [];
+
+  // initialize data
+  getBooks();
+
+  // implementations
+  function getBooks() {
+    BookService.query().then(function(data){
+      console.log('here\'s the books data in the controller', data);
+      vm.books = data;
+    });
+  }
 }

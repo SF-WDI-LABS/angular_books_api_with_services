@@ -1,4 +1,7 @@
-angular.module('libraryApp', ['ngRoute'])
+console.log("JS is loaded & running!!");
+
+
+angular.module('libraryApp', ['ngRoute', 'ngResource'])
        .config(config);
 
 

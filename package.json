@@ -1,0 +1,19 @@
+{
+  "name": "angular_books_api_with_services",
+  "version": "1.0.0",
+  "description": "| **Objectives** | | :---- | | Make use of a service to extract http from the controller | | Interact with promises |",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jha-ayush/angular_books_api_with_services.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jha-ayush/angular_books_api_with_services/issues"
+  },
+  "homepage": "https://github.com/jha-ayush/angular_books_api_with_services#readme"
+}
